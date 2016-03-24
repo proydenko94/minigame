@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		* {
+			overflow: hidden;
+		}
+		body {
+			background: #504444;
+		}
+		.ball {
+			width: 20px;
+			height: 20px;
+			border-radius: 50%;
+			position: absolute;
+		}
+		#ball1 {
+			left: 200px;
+			top: 600px;
+			background: #fa8282;
+			
+		}
+		#ball2 {
+			background: #fafa82;
+		}
+		#fps {
+			position: absolute;
+			right: 40px;
+			top: 40px;
+		}
+	</style>
+</head>
+<body>
+	<div id="ball1" class="ball"></div>
+	<div id="ball2" class="ball"></div>
+	<div id="current"></div>
+	<div id="score"></div>
+	<div id="total"></div>
+	<div id="record"></div>
+	<div id="fps"></div>
+	<script>
+		window.onload=function(){
+			
+			var ball1= document.getElementById("ball1")
+
+			var ball2= document.getElementById("ball2")
+			var ww=window.innerWidth
+			var wh=window.innerHeight
+			var blocks=[]
+			var circle=[]
+			var changeColor = function(el,color){
+				el.style.backgroundColor = color;
+			}
+			var gdist = function(x1,y1,x2,y2){
+				return Math.sqrt((x1-x2)*(x1-x2)+(y1-y2)*(y1-y2));
+			}
+			for(var i=0;i<2;i++){
+				var el = document.createElement("div")
+				el.style.position="absolute"
+				var top = (Math.floor(Math.random()*wh)-50)
+				var left = (Math.floor(Math.random()*ww)-50)
+				var width = (Math.floor(Math.random()*100)+100)
+				var height = (Math.floor(Math.random()*20)+30)
+				el.style.top=top + "px"
+				el.style.left=left+ "px"
+				el.style.width=width+"px"
+				el.style.height=height + "px"
+				var r = Math.floor(Math.random()*255);
+				var g = Math.floor(Math.random()*255);
+				var b = Math.floor(Math.random()*255);
+				var color = "rgb("+r+","+g+","+b +")"
+				var point = {
+					x1: left ,
+					y1: top,
+					x2: left+width,
+					y2: top+height,
+					color: color
+				}
+				blocks.push(point)
+				el.style.backgroundColor=color
+				document.body.appendChild(el)
+			}
+			for(var i=0;i<3;i++){
+				var el = document.createElement("div")
+				el.style.position="absolute"
+				var top = (Math.floor(Math.random()*wh)-50)
+				var left = (Math.floor(Math.random()*ww)-50)
+				var height = (Math.floor(Math.random()*100)+100)
+				var width = (Math.floor(Math.random()*20)+30)
+				el.style.top=top + "px"
+				el.style.left=left+ "px"
+				el.style.width=width+"px"
+				el.style.height=height + "px"
+				var r = Math.floor(Math.random()*255);
+				var g = Math.floor(Math.random()*255);
+				var b = Math.floor(Math.random()*255);
+				var color = "rgb("+r+","+g+","+b +")"
+				var point = {
+					x1: left ,
+					y1: top,
+					x2: left+width,
+					y2: top+height,
+					color: color
+				}
+				blocks.push(point)
+				el.style.backgroundColor=color
+				document.body.appendChild(el)
+			}
+			for(var i=0;i<7;i++){
+				var el = document.createElement("div")
+				el.style.position="absolute"
+				var top = (Math.floor(Math.random()*wh)-50)
+				var left = (Math.floor(Math.random()*ww)-50)
+				var height = (Math.floor(Math.random()*100)+100)
+				var width = height
+				el.style.top=top + "px"
+				el.style.left=left+ "px"
+				el.style.width=width+"px"
+				el.style.height=height + "px"
+				el.style.borderRadius = "50%"
+				var r = Math.floor(Math.random()*255);
+				var g = Math.floor(Math.random()*255);
+				var b = Math.floor(Math.random()*255);
+				var color = "rgb("+r+","+g+","+b +")"
+				var point = {
+					x1: left ,
+					y1: top,
+					x2: left+width,
+					y2: top+height,
+					color: color
+				}
+				circle.push(point)
+				el.style.backgroundColor=color
+				document.body.appendChild(el)
+			}
+			console.log(circle)
+			ball1.style.top = "200px"
+			ball1.style.left = "500px"
+			ball2.style.top = "50px"
+			ball2.style.left = "50px"
+
+
+
+
+
+			var d=2;
+			var arr= {}
+			document.addEventListener("keydown", function(e){
+				arr[e.code]=true
+			})
+			document.addEventListener("keyup", function(e){
+				delete arr[e.code]
+			})
+
+			var score=0;
+			var current =0;
+			var total =0;
+			var record =0;
+			var dx = 2.2
+			var dy = 2.2
+			setInterval(function(){
+				var fps = new Date();
+				
+				var top = ball1.style.top
+				top = +(top.substring(0,top.length-2))
+				var left = ball1.style.left
+				left = +(left.substring(0,left.length-2))
+				var startTop = top
+				var startLeft = left
+				top = ball2.style.top
+				top = +(top.substring(0,top.length-2))
+				left = ball2.style.left
+				left = +(left.substring(0,left.length-2))
+				var startTop2 = top
+				var startLeft2 = left
+
+
+				for (var key in arr) 
+					{
+						var top = ball1.style.top
+						top = +(top.substring(0,top.length-2))
+						var left = ball1.style.left
+						left = +(left.substring(0,left.length-2))
+						if (key=="KeyA") {
+							var ok = 1
+							blocks.forEach(function(el,i){
+							// console.log(el)
+							var top = ball1.style.top
+							top = +(top.substring(0,top.length-2))
+							var left = ball1.style.left
+							left = +(left.substring(0,left.length-2))
+							if(top<el.y2 && top+20>el.y1 && left-d<el.x2 && left+20>el.x1){
+								ok=0
+								changeColor(ball1,el.color)
+								
+							}
+							
+						})
+							if(ok)left-=d
+						}
+						if (key=="KeyD") {
+							var ok = 1
+							blocks.forEach(function(el,i){
+							// console.log(el)
+							var top = ball1.style.top
+							top = +(top.substring(0,top.length-2))
+							var left = ball1.style.left
+							left = +(left.substring(0,left.length-2))
+							
+						
+
+							if(top<el.y2 && top+20>el.y1 && left<el.x2 && left+20+d>el.x1){
+								ok = 0
+								changeColor(ball1,el.color)
+								
+							}
+							
+						})
+							if(ok)left+=d
+						}
+						if (key=="KeyW") {
+							var ok = 1
+							blocks.forEach(function(el,i){
+							
+							var top = ball1.style.top
+							top = +(top.substring(0,top.length-2))
+							var left = ball1.style.left
+							left = +(left.substring(0,left.length-2))
+							
+
+							if(top-d<el.y2 && top+20>el.y1 && left<el.x2 && left+20>el.x1){
+								ok = 0
+								changeColor(ball1,el.color)
+								
+							}
+							
+						})
+							if(ok)top-=d
+						}
+						if (key=="KeyS") {
+							var ok = 1
+							blocks.forEach(function(el,i){
+					
+							var top = ball1.style.top
+							top = +(top.substring(0,top.length-2))
+							var left = ball1.style.left
+							left = +(left.substring(0,left.length-2))
+							
+
+							if(top+d<el.y2 && top+20+d>el.y1 && left<el.x2 && left+20>el.x1){
+								ok = 0
+								changeColor(ball1,el.color)
+								
+							}
+							
+						})
+							if(ok)top+=d
+						}
+						if(top<0)top=0
+						if(left<0)left=0
+						if(top>=window.innerHeight-20)top=window.innerHeight-20
+						if(left>=window.innerWidth-20)left=window.innerWidth-20
+						ball1.style.top = top+"px"
+						ball1.style.left = left+"px"
+						top = ball2.style.top
+						top = +(top.substring(0,top.length-2))
+						left = ball2.style.left
+						left = +(left.substring(0,left.length-2))
+						var startTop2 = top
+						var startLeft2 = left
+						if (key=="ArrowLeft") {
+							var ok = 1
+							blocks.forEach(function(el,i){
+								var top2 = ball2.style.top
+								top2 = +(top2.substring(0,top2.length-2))
+								var left2 = ball2.style.left
+								left2 = +(left2.substring(0,left2.length-2))
+
+								if(top2<el.y2 && top2+20>el.y1 && left2-d<el.x2 && left2+20>el.x1){
+									ok=0
+									changeColor(ball2,el.color)
+								}
+								
+							})
+
+
+							if (ok)left-=d
+						}
+						if (key=="ArrowRight") {
+							var ok = 1
+							blocks.forEach(function(el,i){
+								var top2 = ball2.style.top
+								top2 = +(top2.substring(0,top2.length-2))
+								var left2 = ball2.style.left
+								left2 = +(left2.substring(0,left2.length-2))
+
+								if(top2<el.y2 && top2+20>el.y1 && left2<el.x2 && left2+20+d>el.x1){
+									ok = 0
+									changeColor(ball2,el.color)
+								}
+							})
+							if (ok)left+=d
+						}
+						if (key=="ArrowDown") {
+							var ok = 1
+							blocks.forEach(function(el,i){
+
+								var top2 = ball2.style.top
+								top2 = +(top2.substring(0,top2.length-2))
+								var left2 = ball2.style.left
+								left2 = +(left2.substring(0,left2.length-2))
+
+								if(top2+d<el.y2 && top2+20+d>el.y1 && left2<el.x2 && left2+20>el.x1){
+									ok = 0
+									changeColor(ball2,el.color)
+									
+								}
+							
+						})
+
+
+							if (ok)top+=d
+						}
+						if (key=="ArrowUp") {
+							var ok = 1
+							blocks.forEach(function(el,i){
+								
+								var top2 = ball2.style.top
+								top2 = +(top2.substring(0,top2.length-2))
+								var left2 = ball2.style.left
+								left2 = +(left2.substring(0,left2.length-2))
+
+								if(top2-d<el.y2 && top2+20>el.y1 && left2<el.x2 && left2+20>el.x1){
+									ok = 0
+									changeColor(ball1,el.color)
+									
+								}
+								
+							})
+
+
+							if (ok)top-=d
+						}
+
+						if(top<0)top=0
+						if(left<0)left=0
+						if(top>=window.innerHeight-20)top=window.innerHeight-20
+						if(left>=window.innerWidth-20)left=window.innerWidth-20
+						// top=Math.floor(Math.random()*3)-1
+						// left=Math.floor(Math.random()*3)-1
+						ball2.style.top = top+"px"
+						ball2.style.left = left+"px"
+					}
+					var top1=ball1.style.top
+					var left1=ball1.style.left
+					var top2=ball2.style.top
+					var left2=ball2.style.left
+					
+					top1 = +(top1.substring(0,top1.length-2))
+					top2 = +(top2.substring(0,top2.length-2))
+					left1 = +(left1.substring(0,left1.length-2))
+					left2 = +(left2.substring(0,left2.length-2))
+					if(Math.abs(left1-left2)<20 && Math.abs(top1-top2)<20) {
+						ball2.style.left=Math.floor(Math.random()*window.innerWidth)+"px";
+						ball2.style.top=Math.floor(Math.random()*window.innerHeight)+"px";
+						score++
+						total+=current
+						record=Math.max(current,record)
+						current=0
+						console.log(score);
+						document.getElementById("score").innerHTML="score "+ score
+						document.getElementById("record").innerHTML="record "+ record
+						document.getElementById("total").innerHTML="total: "+ total
+					} else {
+						current++
+						document.getElementById("current").innerHTML="current: "+ current
+					}
+						var top = ball2.style.top
+						top = +(top.substring(0,top.length-2))
+						var left = ball2.style.left
+						left = +(left.substring(0,left.length-2))
+						
+						var top2 = ball1.style.top
+						top2 = +(top2.substring(0,top2.length-2))
+						var left2 = ball1.style.left
+						left2 = +(left2.substring(0,left2.length-2))
+
+						/*
+							RANDOM STUDIP AI __START__
+						*/
+						top+=Math.floor(Math.random()*3)-1+dy
+						left+=Math.floor(Math.random()*3)-1+dx
+						if(Math.floor(Math.random()*50)==0){
+							dx=-dx
+						}
+						if(Math.floor(Math.random()*50)==0){
+							dy=-dy
+						}
+						if(gdist(left,top,left2,top2)<100){
+								console.log("DANGER")
+								if(top<top2-50){
+							
+									dy=-Math.abs(dy)
+									
+								}
+								if(top>top2+50){
+									
+									dy=Math.abs(dy)
+								}
+								if(left<left2-50){
+									dx=-Math.abs(dx)
+								}
+								if(left>left2+50){
+									dx=Math.abs(dx)
+								}
+							
+						}
+						if(top<0){top=0;dy*=-1;}
+						if(left<0){left=0;dx*=-1;}
+
+						if(top>=window.innerHeight-20){top=window.innerHeight-20
+							dy*=-1;
+						}
+						if(left>=window.innerWidth-20){left=window.innerWidth-20
+							dx*=-1
+						}
+						if(top<120 && left<20){
+							if(dx<0)dx*=-1
+							if(dy<0)dy*=-1
+						}
+						if(top<120 && left>ww-140){
+							if(dx>0)dx*=-1
+							if(dy<0)dy*=-1
+						}
+						if(top>wh-140 && left>ww-140){
+							if(dx>0)dx*=-1
+							if(dy>0)dy*=-1
+						}
+						if(top>wh-140 && left<120){
+							if(dx<0)dx*=-1
+							if(dy>0)dy*=-1
+						}
+						/*
+							RANDOM STUDIP AI __END__
+						*/
+
+						ball2.style.top = top+"px"
+						ball2.style.left = left+"px"
+
+
+
+						blocks.forEach(function(el,i){
+
+							var top2 = ball2.style.top
+							top2 = +(top2.substring(0,top2.length-2))
+							var left2 = ball2.style.left
+							left2 = +(left2.substring(0,left2.length-2))
+
+							if(top2<el.y2 && top2+20>el.y1 && left2<el.x2 && left2+20>el.x1){
+								top2=startTop2
+								left2=startLeft2
+								ball2.style.backgroundColor = el.color
+							}
+
+							ball2.style.top = top2+"px"
+							ball2.style.left = left2+"px"
+						})
+						circle.forEach(function(el,i){
+
+							var top2 = ball2.style.top
+							top2 = +(top2.substring(0,top2.length-2))
+							var left2 = ball2.style.left
+							left2 = +(left2.substring(0,left2.length-2))
+							var top = ball1.style.top
+							top = +(top.substring(0,top.length-2))
+							var left = ball1.style.left
+							left = +(left.substring(0,left.length-2))
+
+							var radius = (el.y2-el.y1)/2
+							var center = {
+								x: (el.x1+radius),
+								y: (el.y1+radius)
+							}
+							var b1center = {y:top+10, x:left+10}
+							var ddist = gdist(b1center.x,b1center.y,center.x,center.y)
+							if(ddist<=radius+10){
+								top=startTop
+								left=startLeft
+								ball1.style.backgroundColor = el.color
+							}
+
+							var b2center = {y:top2+10, x:left2+10}
+							ddist = gdist(b2center.x,b2center.y,center.x,center.y)
+							if(ddist<=radius+10){
+								top2=startTop2
+								left2=startLeft2
+								ball2.style.backgroundColor = el.color
+							}
+
+							ball2.style.top = top2+"px"
+							ball2.style.left = left2+"px"
+							ball1.style.top = top+"px"
+							ball1.style.left = left+"px"
+						})
+				
+				var now = new Date();
+				fpss = Math.floor(1000/(now - fps));
+				if(fpss==Infinity || fps>240)fpss=240
+				fps = now
+				document.getElementById("fps").innerHTML = "fps: " + fpss
+			},2)
+		}	
+	</script>
+</body>
+</html>
