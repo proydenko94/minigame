@@ -140,11 +140,6 @@
 			ball1.style.left = "500px"
 			ball2.style.top = "50px"
 			ball2.style.left = "50px"
-
-
-
-
-
 			var d=2;
 			var arr= {}
 			document.addEventListener("keydown", function(e){
@@ -153,7 +148,6 @@
 			document.addEventListener("keyup", function(e){
 				delete arr[e.code]
 			})
-
 			var score=0;
 			var current =0;
 			var total =0;
@@ -175,8 +169,6 @@
 				left = +(left.substring(0,left.length-2))
 				var startTop2 = top
 				var startLeft2 = left
-
-
 				for (var key in arr) 
 					{
 						var top = ball1.style.top
@@ -316,11 +308,8 @@
 									ok = 0
 									changeColor(ball2,el.color)
 									
-								}
-							
+								}			
 						})
-
-
 							if (ok)top+=d
 						}
 						if (key=="ArrowUp") {
@@ -339,8 +328,6 @@
 								}
 								
 							})
-
-
 							if (ok)top-=d
 						}
 
